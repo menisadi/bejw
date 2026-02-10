@@ -6,13 +6,19 @@ from models import ReadingList
 console = Console()
 
 
-def render_links(reading_list: ReadingList) -> None:
+def render_links(reading_list: ReadingList, show_ids: bool = False) -> None:
     table = Table(title="Bejeweled Reading List")
-    table.add_column("ID", justify="right", style="cyan", no_wrap=True)
+    if show_ids:
+        table.add_column("ID", style="cyan", no_wrap=True)
     table.add_column("Title", style="magenta")
     table.add_column("URL", style="green")
 
     for link in reading_list.links:
-        table.add_row(str(link.id), link.title, link.url)
+        row = []
+        if show_ids:
+            row.append(str(link.id))
+        row.append(link.title)
+        row.append(link.url)
+        table.add_row(*row)
 
     console.print(table)

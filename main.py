@@ -60,10 +60,10 @@ def remove(link_id: str, file_path: str = DEFAULT_FILE_PATH) -> None:
 
 
 @app.command()
-def list(file_path: str = DEFAULT_FILE_PATH) -> None:
+def list(file_path: str = DEFAULT_FILE_PATH, show_ids: bool = False) -> None:
     """Display the reading list."""
     reading_list = load(file_path)
-    render_links(reading_list)
+    render_links(reading_list, show_ids=show_ids)
 
 
 @app.command()
