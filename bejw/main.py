@@ -7,7 +7,7 @@ from pathlib import Path
 import typer
 
 from .models import CapacityError, ReadingList
-from .render import render_links
+from .render import OutputFormat, render_links
 from .storage import load, save
 from rich import print
 
@@ -65,10 +65,29 @@ def remove(link_id: str, file_path: str = DEFAULT_FILE_PATH) -> None:
 
 
 @app.command()
-def list(file_path: str = DEFAULT_FILE_PATH, show_ids: bool = False) -> None:
+def list(
+    file_path: str = DEFAULT_FILE_PATH,
+    show_ids: bool = False,
+    output_format: OutputFormat = typer.Option(
+        OutputFormat.TABLE,
+        "--format",
+        "-f",
+        help="Output format: table, tsv, csv, or jsonl.",
+    ),
+    no_header: bool = typer.Option(
+        False,
+        "--no-header",
+        help="Omit the header row for tsv and csv output.",
+    ),
+) -> None:
     """Display the reading list."""
     reading_list = load(file_path)
-    render_links(reading_list, show_ids=show_ids)
+    render_links(
+        reading_list,
+        show_ids=show_ids,
+        output_format=output_format,
+        include_header=not no_header,
+    )
 
 
 @app.command()

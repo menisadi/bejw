@@ -15,6 +15,8 @@ python main.py --help
 python main.py init --capacity 10
 python main.py add "https://example.com" "Example"
 python main.py list
+python main.py list --format tsv --show-ids | fzf
+python main.py list --format jsonl | jq .
 python main.py remove <id>
 python main.py capacity 5
 python main.py clear
