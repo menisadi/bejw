@@ -8,6 +8,7 @@ import typer
 from .models import CapacityError, ReadingList
 from .render import render_links
 from .storage import load, save
+from rich import print
 
 DEFAULT_CAPACITY = 10
 DEFAULT_FILE_PATH = "~/.bejw/links.json"
@@ -17,11 +18,10 @@ app = typer.Typer()
 
 @app.callback(invoke_without_command=True)
 def main(context: typer.Context) -> None:
-    """Entry point that shows basic info when no subcommand is provided."""
     if context.invoked_subcommand is not None:
         return
-    typer.echo("bejw: A capped reading list for links that shimmer")
-    typer.echo("Run with --help to see commands and options.")
+    print("[bold magenta]bejw[/bold magenta]: A capped reading list for links that shimmer")
+    print("Run with [bold cyan]--help[/bold cyan] to see commands and options.")
 
 
 @app.command()
