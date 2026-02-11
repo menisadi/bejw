@@ -5,9 +5,9 @@ from pathlib import Path
 
 import typer
 
-from models import CapacityError, ReadingList
-from render import render_links
-from storage import load, save
+from .models import CapacityError, ReadingList
+from .render import render_links
+from .storage import load, save
 
 DEFAULT_CAPACITY = 10
 DEFAULT_FILE_PATH = "~/.bejw/links.json"

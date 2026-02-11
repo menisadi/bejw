@@ -1,7 +1,7 @@
 from rich.console import Console
 from rich.table import Table
 
-from models import ReadingList
+from .models import ReadingList
 
 console = Console()
 
