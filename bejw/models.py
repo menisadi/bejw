@@ -7,9 +7,9 @@ from uuid import uuid4
 
 class CapacityError(Exception):
     """Raised when trying to add a link to a full reading list."""
+
     def __init__(self, message: str = "Reading list is full") -> None:
         super().__init__(message)
-    
 
 
 @dataclass(frozen=True)

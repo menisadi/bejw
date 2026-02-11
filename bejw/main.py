@@ -1,6 +1,7 @@
 """
 bejw:  A capped reading list for links that shimmer
 """
+
 from pathlib import Path
 
 import typer
@@ -20,7 +21,9 @@ app = typer.Typer()
 def main(context: typer.Context) -> None:
     if context.invoked_subcommand is not None:
         return
-    print("[bold magenta]bejw[/bold magenta]: A capped reading list for links that shimmer")
+    print(
+        "[bold magenta]bejw[/bold magenta]: A capped reading list for links that shimmer"
+    )
     print("Run with [bold cyan]--help[/bold cyan] to see commands and options.")
 
 
@@ -42,7 +45,9 @@ def add(url: str, title: str, file_path: str = DEFAULT_FILE_PATH) -> None:
     try:
         link = reading_list.add_link(url, title)
     except CapacityError:
-        typer.echo("Reading list is full! Please remove a link before adding a new one.")
+        typer.echo(
+            "Reading list is full! Please remove a link before adding a new one."
+        )
         raise typer.Exit(code=1)
     save(reading_list, file_path)
     typer.echo(f"Added {link.id}")
