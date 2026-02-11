@@ -1,10 +1,23 @@
+[build-system]
+requires = ["setuptools>=69", "wheel"]
+build-backend = "setuptools.build_meta"
+
 [project]
 name = "bejw"
 version = "0.1.0"
-description = "Add your description here"
+description = "A capped reading list for links that shimmer"
 readme = "README.md"
 requires-python = ">=3.13"
 dependencies = [
     "rich>=14.3.2",
     "typer>=0.21.1",
+]
+keywords = ["cli", "reading-list", "links", "productivity"]
+
+[project.scripts]
+bejw = "bejw.main:app"
+
+[dependency-groups]
+dev = [
+    "pytest>=9.0.2",
 ]
