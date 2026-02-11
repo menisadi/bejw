@@ -6,12 +6,19 @@ The format is based on Keep a Changelog, and this project adheres to Semantic Ve
 
 ## [Unreleased]
 
+## [0.2.2] - 2026-02-11
+
+- Simpler table format
+
 ## [0.2.1] - 2026-02-11
+
 - Fixing entry point
 
 ## [0.2.0] - 2026-02-11
+
 - Fixed project structure.
 - UI improvements.
 
 ## [0.1.0] - 2026-02-11
+
 - Initial pre-release.
