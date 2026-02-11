@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "bejw"
-version = "0.1.0"
+version = "0.2.0"
 description = "A capped reading list for links that shimmer"
 readme = "README.md"
 requires-python = ">=3.13"
@@ -14,6 +14,11 @@ dependencies = [
     "typer>=0.21.1",
 ]
 keywords = ["cli", "reading-list", "links", "productivity"]
+
+[project.urls]
+Homepage = "https://github.com/menisadi/bejw"
+Repository = "https://github.com/menisadi/bejw"
+Changelog = "https://github.com/menisadi/bejw/blob/main/CHANGELOG.md"
 
 [project.scripts]
 bejw = "bejw.main:app"
