@@ -6,6 +6,11 @@ The format is based on Keep a Changelog, and this project adheres to Semantic Ve
 
 ## [Unreleased]
 
+## [0.2.3] - 2026-02-12
+
+- Enumerating the list (by date added)
+- Use the numbered entries for removal
+
 ## [0.2.2] - 2026-02-11
 
 - Simpler table format
