@@ -17,10 +17,12 @@ python main.py add "https://example.com" "Example"
 python main.py list
 python main.py list --format tsv --show-ids | fzf
 python main.py list --format jsonl | jq .
-python main.py remove <id>
+python main.py remove <number>
 python main.py capacity 5
 python main.py clear
 ```
+
+`list` output includes a 1-based number column that matches the `remove` command.
 
 ## Storage
 

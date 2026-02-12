@@ -50,17 +50,22 @@ def add(url: str, title: str, file_path: str = DEFAULT_FILE_PATH) -> None:
         )
         raise typer.Exit(code=1)
     save(reading_list, file_path)
-    typer.echo(f"Added {link.id}")
+    ordered = reading_list.ordered_links()
+    number = next(
+        (index for index, item in enumerate(ordered, start=1) if item.id == link.id),
+        len(ordered),
+    )
+    typer.echo(f"Added #{number}")
 
 
 @app.command()
-def remove(link_id: str, file_path: str = DEFAULT_FILE_PATH) -> None:
-    """Remove a link from the reading list by id."""
+def remove(number: int, file_path: str = DEFAULT_FILE_PATH) -> None:
+    """Remove a link from the reading list by number."""
     reading_list = load(file_path)
-    removed = reading_list.remove_link(link_id)
+    removed = reading_list.remove_by_number(number)
     save(reading_list, file_path)
     if not removed:
-        typer.echo("No link found with that id.")
+        typer.echo("No link found with that number.")
         raise typer.Exit(code=1)
 
 

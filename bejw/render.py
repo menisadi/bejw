@@ -19,7 +19,7 @@ class OutputFormat(StrEnum):
 
 
 def _link_headers(show_ids: bool) -> list[str]:
-    headers = []
+    headers = ["no"]
     if show_ids:
         headers.append("id")
     headers.extend(["title", "url"])
@@ -28,8 +28,9 @@ def _link_headers(show_ids: bool) -> list[str]:
 
 def _link_values(reading_list: ReadingList, show_ids: bool) -> list[list[str]]:
     rows: list[list[str]] = []
-    for link in reading_list.links:
-        row: list[str] = []
+    ordered = reading_list.ordered_links()
+    for index, link in enumerate(ordered, start=1):
+        row: list[str] = [str(index)]
         if show_ids:
             row.append(link.id)
         row.append(link.title)
@@ -53,8 +54,9 @@ def _render_delimited(
 def _render_jsonl(reading_list: ReadingList, show_ids: bool) -> str:
     """Render the reading list as JSONL (JSON Lines) format."""
     lines = []
-    for link in reading_list.links:
-        payload = {"title": link.title, "url": link.url}
+    ordered = reading_list.ordered_links()
+    for index, link in enumerate(ordered, start=1):
+        payload = {"number": index, "title": link.title, "url": link.url}
         if show_ids:
             payload["id"] = link.id
         lines.append(json.dumps(payload, ensure_ascii=False))
@@ -85,13 +87,15 @@ def render_links(
         title_justify="left",
         title_style="bold red",
     )
+    table.add_column("No.", style="cyan", no_wrap=True)
     if show_ids:
         table.add_column("ID", style="cyan", no_wrap=True)
     table.add_column("Title", style="magenta")
     table.add_column("URL", style="green")
 
-    for link in reading_list.links:
-        row = []
+    ordered = reading_list.ordered_links()
+    for index, link in enumerate(ordered, start=1):
+        row = [str(index)]
         if show_ids:
             row.append(str(link.id))
         row.append(link.title)
