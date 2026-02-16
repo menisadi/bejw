@@ -26,9 +26,15 @@ def _link_headers(show_ids: bool) -> list[str]:
     return headers
 
 
-def _link_values(reading_list: ReadingList, show_ids: bool) -> list[list[str]]:
+def _visible_links(reading_list: ReadingList, include_read: bool) -> list:
+    return reading_list.ordered_links() if include_read else reading_list.unread_links()
+
+
+def _link_values(
+    reading_list: ReadingList, show_ids: bool, include_read: bool
+) -> list[list[str]]:
     rows: list[list[str]] = []
-    ordered = reading_list.ordered_links()
+    ordered = _visible_links(reading_list, include_read)
     for index, link in enumerate(ordered, start=1):
         row: list[str] = [str(index)]
         if show_ids:
@@ -40,21 +46,25 @@ def _link_values(reading_list: ReadingList, show_ids: bool) -> list[list[str]]:
 
 
 def _render_delimited(
-    reading_list: ReadingList, show_ids: bool, include_header: bool, delimiter: str
+    reading_list: ReadingList,
+    show_ids: bool,
+    include_header: bool,
+    delimiter: str,
+    include_read: bool,
 ) -> str:
     output = io.StringIO()
     writer = csv.writer(output, delimiter=delimiter, lineterminator="\n")
 
     if include_header:
         writer.writerow(_link_headers(show_ids))
-    writer.writerows(_link_values(reading_list, show_ids))
+    writer.writerows(_link_values(reading_list, show_ids, include_read))
     return output.getvalue()
 
 
-def _render_jsonl(reading_list: ReadingList, show_ids: bool) -> str:
+def _render_jsonl(reading_list: ReadingList, show_ids: bool, include_read: bool) -> str:
     """Render the reading list as JSONL (JSON Lines) format."""
     lines = []
-    ordered = reading_list.ordered_links()
+    ordered = _visible_links(reading_list, include_read)
     for index, link in enumerate(ordered, start=1):
         payload = {"number": index, "title": link.title, "url": link.url}
         if show_ids:
@@ -69,15 +79,22 @@ def render_links(
     show_ids: bool = False,
     output_format: OutputFormat = OutputFormat.TABLE,
     include_header: bool = True,
+    include_read: bool = False,
 ) -> None:
     if output_format == OutputFormat.TSV:
-        console.file.write(_render_delimited(reading_list, show_ids, include_header, "\t"))
+        console.file.write(
+            _render_delimited(
+                reading_list, show_ids, include_header, "\t", include_read
+            )
+        )
         return
     if output_format == OutputFormat.CSV:
-        console.file.write(_render_delimited(reading_list, show_ids, include_header, ","))
+        console.file.write(
+            _render_delimited(reading_list, show_ids, include_header, ",", include_read)
+        )
         return
     if output_format == OutputFormat.JSONL:
-        console.file.write(_render_jsonl(reading_list, show_ids))
+        console.file.write(_render_jsonl(reading_list, show_ids, include_read))
         return
 
     # If non of the above formats were selected, rendering a table
@@ -93,7 +110,7 @@ def render_links(
     table.add_column("Title", style="magenta")
     table.add_column("URL", style="green")
 
-    ordered = reading_list.ordered_links()
+    ordered = _visible_links(reading_list, include_read)
     for index, link in enumerate(ordered, start=1):
         row = [str(index)]
         if show_ids:

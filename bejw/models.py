@@ -19,6 +19,7 @@ class Link:
     url: str
     title: str
     created_at: str
+    read_at: str | None = None
 
     @staticmethod
     def create(url: str, title: str) -> "Link":
@@ -51,6 +52,12 @@ class ReadingList:
     def ordered_links(self) -> list[Link]:
         return sorted(self.links, key=_created_at_key)
 
+    def unread_links(self) -> list[Link]:
+        return [link for link in self.ordered_links() if link.read_at is None]
+
+    def read_links(self) -> list[Link]:
+        return [link for link in self.ordered_links() if link.read_at is not None]
+
     def remove_link(self, link_id: str) -> bool:
         before = len(self.links)
         self.links = [link for link in self.links if link.id != link_id]
@@ -65,6 +72,19 @@ class ReadingList:
 
     def clear_links(self) -> None:
         self.links = []
+
+    def mark_read_by_number(self, number: int, include_read: bool = False) -> bool:
+        visible_links = self.ordered_links() if include_read else self.unread_links()
+        if number < 1 or number > len(visible_links):
+            return False
+
+        target_id = visible_links[number - 1].id
+        read_at = datetime.now(timezone.utc).isoformat()
+        self.links = [
+            link if link.id != target_id else Link(**{**link.__dict__, "read_at": read_at})
+            for link in self.links
+        ]
+        return True
 
     def to_dict(self) -> dict:
         return {
@@ -83,6 +103,8 @@ class ReadingList:
                     **item,
                     "created_at": (base_time + timedelta(seconds=index)).isoformat(),
                 }
+            if "read_at" not in item:
+                item = {**item, "read_at": None}
             links.append(Link(**item))
         capacity = data.get("capacity", 10)
         return ReadingList(capacity=capacity, links=links)
