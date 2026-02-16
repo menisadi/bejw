@@ -22,7 +22,7 @@ def _link_headers(show_ids: bool) -> list[str]:
     headers = ["no"]
     if show_ids:
         headers.append("id")
-    headers.extend(["title", "url"])
+    headers.extend(["status", "title", "url"])
     return headers
 
 
@@ -39,6 +39,7 @@ def _link_values(
         row: list[str] = [str(index)]
         if show_ids:
             row.append(link.id)
+        row.append("read" if link.read_at is not None else "unread")
         row.append(link.title)
         row.append(link.url)
         rows.append(row)
@@ -66,7 +67,12 @@ def _render_jsonl(reading_list: ReadingList, show_ids: bool, include_read: bool)
     lines = []
     ordered = _visible_links(reading_list, include_read)
     for index, link in enumerate(ordered, start=1):
-        payload = {"number": index, "title": link.title, "url": link.url}
+        payload = {
+            "number": index,
+            "status": "read" if link.read_at is not None else "unread",
+            "title": link.title,
+            "url": link.url,
+        }
         if show_ids:
             payload["id"] = link.id
         lines.append(json.dumps(payload, ensure_ascii=False))
@@ -107,6 +113,7 @@ def render_links(
     table.add_column("No.", style="cyan", no_wrap=True)
     if show_ids:
         table.add_column("ID", style="cyan", no_wrap=True)
+    table.add_column("Status", style="yellow", no_wrap=True)
     table.add_column("Title", style="magenta")
     table.add_column("URL", style="green")
 
@@ -115,6 +122,7 @@ def render_links(
         row = [str(index)]
         if show_ids:
             row.append(str(link.id))
+        row.append("read" if link.read_at is not None else "unread")
         row.append(link.title)
         row.append(link.url)
         table.add_row(*row)

@@ -44,8 +44,8 @@ def test_list_tsv_with_header_and_ids(tmp_path: Path) -> None:
     assert result.exit_code == 0
     assert (
         result.stdout
-        == "no\tid\ttitle\turl\n"
-        "1\tid-1\tExample One\thttps://example.com/1\n"
+        == "no\tid\tstatus\ttitle\turl\n"
+        "1\tid-1\tunread\tExample One\thttps://example.com/1\n"
     )
 
 
@@ -59,7 +59,7 @@ def test_list_csv_without_header(tmp_path: Path) -> None:
     )
 
     assert result.exit_code == 0
-    assert result.stdout == "1,Example One,https://example.com/1\n"
+    assert result.stdout == "1,unread,Example One,https://example.com/1\n"
 
 
 def test_list_jsonl_with_ids(tmp_path: Path) -> None:
@@ -74,7 +74,7 @@ def test_list_jsonl_with_ids(tmp_path: Path) -> None:
     assert result.exit_code == 0
     assert (
         result.stdout
-        == '{"number": 1, "title": "Example One", "url": "https://example.com/1", "id": "id-1"}\n'
+        == '{"number": 1, "status": "unread", "title": "Example One", "url": "https://example.com/1", "id": "id-1"}\n'
     )
 
 
@@ -98,7 +98,7 @@ def test_list_include_read_shows_read_entries(tmp_path: Path) -> None:
     assert result.exit_code == 0
     assert (
         result.stdout
-        == "no\tid\ttitle\turl\n"
-        "1\tid-1\tExample One\thttps://example.com/1\n"
-        "2\tid-2\tExample Two\thttps://example.com/2\n"
+        == "no\tid\tstatus\ttitle\turl\n"
+        "1\tid-1\tunread\tExample One\thttps://example.com/1\n"
+        "2\tid-2\tread\tExample Two\thttps://example.com/2\n"
     )

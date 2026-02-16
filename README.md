@@ -24,7 +24,7 @@ python main.py capacity 5
 python main.py clear
 ```
 
-`list` output includes a 1-based number column that matches the `remove` command.
+`list` output includes a 1-based number column and a `status` field (`unread`/`read`) so you can distinguish entry state across output formats.
 By default, links marked as read are hidden from `list`; use `--include-read` to display them.
 
 ## Storage
