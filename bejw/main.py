@@ -51,7 +51,7 @@ def add(url: str, title: str, file_path: str = DEFAULT_FILE_PATH) -> None:
         )
         raise typer.Exit(code=1)
     save(reading_list, file_path)
-    ordered = reading_list.ordered_links()
+    ordered = reading_list.unread_links()
     number = next(
         (index for index, item in enumerate(ordered, start=1) if item.id == link.id),
         len(ordered),
@@ -74,12 +74,12 @@ def remove(number: int, file_path: str = DEFAULT_FILE_PATH) -> None:
 def read(number: int, file_path: str = DEFAULT_FILE_PATH) -> None:
     """Open a link from the reading list by number."""
     reading_list = load(file_path)
-    ordered = reading_list.ordered_links()
-    if number < 1 or number > len(ordered):
+    unread = reading_list.unread_links()
+    if number < 1 or number > len(unread):
         typer.echo("No link found with that number.")
         raise typer.Exit(code=1)
 
-    url = ordered[number - 1].url
+    url = unread[number - 1].url
     webbrowser.open(url)
     typer.echo(f"Opened #{number}: {url}")
 

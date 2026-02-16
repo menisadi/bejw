@@ -63,11 +63,11 @@ class ReadingList:
         self.links = [link for link in self.links if link.id != link_id]
         return len(self.links) < before
 
-    def remove_by_number(self, number: int) -> bool:
-        ordered = self.ordered_links()
-        if number < 1 or number > len(ordered):
+    def remove_by_number(self, number: int, include_read: bool = False) -> bool:
+        visible_links = self.ordered_links() if include_read else self.unread_links()
+        if number < 1 or number > len(visible_links):
             return False
-        target_id = ordered[number - 1].id
+        target_id = visible_links[number - 1].id
         return self.remove_link(target_id)
 
     def clear_links(self) -> None:

@@ -70,3 +70,39 @@ def test_read_returns_error_for_empty_list(tmp_path: Path) -> None:
 
     assert result.exit_code == 1
     assert result.stdout == "No link found with that number.\n"
+
+
+def test_read_uses_unread_numbering_by_default(tmp_path: Path, monkeypatch) -> None:
+    file_path = tmp_path / "links.json"
+    reading_list = ReadingList(
+        capacity=10,
+        links=[
+            Link(
+                id="id-1",
+                title="Read Example",
+                url="https://example.com/read",
+                created_at="2024-01-01T00:00:00+00:00",
+                read_at="2024-01-03T00:00:00+00:00",
+            ),
+            Link(
+                id="id-2",
+                title="Unread Example",
+                url="https://example.com/unread",
+                created_at="2024-01-02T00:00:00+00:00",
+            ),
+        ],
+    )
+    save(reading_list, str(file_path))
+    opened: list[str] = []
+
+    def _fake_open(url: str, *_args, **_kwargs) -> bool:
+        opened.append(url)
+        return True
+
+    monkeypatch.setattr(webbrowser, "open", _fake_open)
+
+    result = runner.invoke(app, ["read", "1", "--file-path", str(file_path)])
+
+    assert result.exit_code == 0
+    assert opened == ["https://example.com/unread"]
+    assert result.stdout == "Opened #1: https://example.com/unread\n"
