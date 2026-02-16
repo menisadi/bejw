@@ -6,6 +6,10 @@ The format is based on Keep a Changelog, and this project adheres to Semantic Ve
 
 ## [Unreleased]
 
+## [0.2.4] - 2026-02-16
+
+- Add `read` command to open links by numbered entry.
+
 ## [0.2.3] - 2026-02-12
 
 - Enumerating the list (by date added)
