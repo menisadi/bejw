@@ -6,6 +6,10 @@ The format is based on Keep a Changelog, and this project adheres to Semantic Ve
 
 ## [Unreleased]
 
+## [0.3.2] - 2026-02-16
+
+- Added `list --color auto|always|never` to control ANSI color output (useful for pipes like `less -R`).
+
 ## [0.3.1] - 2026-02-16
 
 - Added 'status' on 'list' output (read/unread)
