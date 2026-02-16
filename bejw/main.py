@@ -84,10 +84,27 @@ def read(number: int, file_path: str = DEFAULT_FILE_PATH) -> None:
     typer.echo(f"Opened #{number}: {url}")
 
 
+@app.command("mark-read")
+def mark_read(number: int, file_path: str = DEFAULT_FILE_PATH) -> None:
+    """Mark a link as read by number."""
+    reading_list = load(file_path)
+    marked = reading_list.mark_read_by_number(number)
+    if not marked:
+        typer.echo("No link found with that number.")
+        raise typer.Exit(code=1)
+    save(reading_list, file_path)
+    typer.echo(f"Marked #{number} as read.")
+
+
 @app.command()
 def list(
     file_path: str = DEFAULT_FILE_PATH,
     show_ids: bool = False,
+    include_read: bool = typer.Option(
+        False,
+        "--include-read",
+        help="Include links that have been marked as read.",
+    ),
     output_format: OutputFormat = typer.Option(
         OutputFormat.TABLE,
         "--format",
@@ -107,6 +124,7 @@ def list(
         show_ids=show_ids,
         output_format=output_format,
         include_header=not no_header,
+        include_read=include_read,
     )
 
 

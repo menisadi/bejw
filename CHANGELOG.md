@@ -6,6 +6,13 @@ The format is based on Keep a Changelog, and this project adheres to Semantic Ve
 
 ## [Unreleased]
 
+## [0.3.0] - 2026-02-16
+
+- mark-read command
+- persisted read_at
+- list now hides read links by default
+- --include-read flag
+
 ## [0.2.4] - 2026-02-16
 
 - Add `read` command to open links by numbered entry.
