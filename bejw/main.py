@@ -8,7 +8,7 @@ from pathlib import Path
 import typer
 
 from .models import CapacityError, ReadingList
-from .render import OutputFormat, render_links
+from .render import ColorMode, OutputFormat, render_links
 from .storage import load, save
 from rich import print
 
@@ -111,6 +111,11 @@ def list(
         "-f",
         help="Output format: table, tsv, csv, or jsonl.",
     ),
+    color: ColorMode = typer.Option(
+        ColorMode.AUTO,
+        "--color",
+        help="Color mode for output: auto, always, or never.",
+    ),
     no_header: bool = typer.Option(
         False,
         "--no-header",
@@ -125,6 +130,7 @@ def list(
         output_format=output_format,
         include_header=not no_header,
         include_read=include_read,
+        color=color,
     )
 
 

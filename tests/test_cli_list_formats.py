@@ -102,3 +102,17 @@ def test_list_include_read_shows_read_entries(tmp_path: Path) -> None:
         "1\tid-1\tunread\tExample One\thttps://example.com/1\n"
         "2\tid-2\tread\tExample Two\thttps://example.com/2\n"
     )
+
+
+def test_list_table_color_always_emits_ansi_codes(tmp_path: Path) -> None:
+    file_path = tmp_path / "links.json"
+    _seed_reading_list(file_path)
+
+    result = runner.invoke(
+        app,
+        ["list", "--file-path", str(file_path), "--color", "always"],
+    )
+
+    assert result.exit_code == 0
+    assert "Bejeweled Reading List" in result.stdout
+    assert "\x1b[" in result.stdout

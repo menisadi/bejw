@@ -8,14 +8,17 @@ from rich.table import Table, box
 
 from .models import ReadingList
 
-console = Console()
-
-
 class OutputFormat(StrEnum):
     TABLE = "table"
     TSV = "tsv"
     CSV = "csv"
     JSONL = "jsonl"
+
+
+class ColorMode(StrEnum):
+    AUTO = "auto"
+    ALWAYS = "always"
+    NEVER = "never"
 
 
 def _link_headers(show_ids: bool) -> list[str]:
@@ -86,21 +89,29 @@ def render_links(
     output_format: OutputFormat = OutputFormat.TABLE,
     include_header: bool = True,
     include_read: bool = False,
+    color: ColorMode = ColorMode.AUTO,
 ) -> None:
+    if color == ColorMode.ALWAYS:
+        render_console = Console(force_terminal=True)
+    elif color == ColorMode.NEVER:
+        render_console = Console(no_color=True)
+    else:
+        render_console = Console()
+
     if output_format == OutputFormat.TSV:
-        console.file.write(
+        render_console.file.write(
             _render_delimited(
                 reading_list, show_ids, include_header, "\t", include_read
             )
         )
         return
     if output_format == OutputFormat.CSV:
-        console.file.write(
+        render_console.file.write(
             _render_delimited(reading_list, show_ids, include_header, ",", include_read)
         )
         return
     if output_format == OutputFormat.JSONL:
-        console.file.write(_render_jsonl(reading_list, show_ids, include_read))
+        render_console.file.write(_render_jsonl(reading_list, show_ids, include_read))
         return
 
     # If non of the above formats were selected, rendering a table
@@ -127,4 +138,4 @@ def render_links(
         row.append(link.url)
         table.add_row(*row)
 
-    console.print(table)
+    render_console.print(table)
