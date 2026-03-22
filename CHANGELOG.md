@@ -6,6 +6,10 @@ The format is based on Keep a Changelog, and this project adheres to Semantic Ve
 
 ## [Unreleased]
 
+## [0.4.0] - 2026-03-22
+
+- Interactive replace: when adding a link to a full list, pick an existing link to replace instead of failing.
+
 ## [0.3.3] - 2026-02-16
 
 - Fix: numbering on all command now use the same numbering (counting only unread links)
