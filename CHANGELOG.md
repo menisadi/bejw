@@ -6,6 +6,12 @@ The format is based on Keep a Changelog, and this project adheres to Semantic Ve
 
 ## [Unreleased]
 
+## [0.4.1] - 2026-03-22
+
+- Show capacity in list table title (e.g. "12/15")
+- Capacity now only counts unread links, so marking a link as read frees a slot
+- `capacity` command without arguments now shows the current capacity
+
 ## [0.4.0] - 2026-03-22
 
 - Interactive replace: when adding a link to a full list, pick an existing link to replace instead of failing.
