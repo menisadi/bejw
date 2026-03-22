@@ -85,3 +85,28 @@ def test_from_dict_defaults_read_at_for_legacy_entries() -> None:
 
     assert len(restored.links) == 1
     assert restored.links[0].read_at is None
+
+
+def test_replace_by_number_removes_old_and_adds_new() -> None:
+    reading_list = ReadingList(capacity=2)
+    first = reading_list.add_link("https://first.com", "First")
+    second = reading_list.add_link("https://second.com", "Second")
+
+    new_link = reading_list.replace_by_number(1, "https://new.com", "New")
+
+    assert new_link is not None
+    assert new_link.url == "https://new.com"
+    assert len(reading_list.links) == 2
+    remaining_ids = {link.id for link in reading_list.links}
+    assert first.id not in remaining_ids
+    assert second.id in remaining_ids
+    assert new_link.id in remaining_ids
+
+
+def test_replace_by_number_returns_none_for_invalid_number() -> None:
+    reading_list = ReadingList(capacity=1)
+    reading_list.add_link("https://example.com", "Example")
+
+    assert reading_list.replace_by_number(0, "https://new.com", "New") is None
+    assert reading_list.replace_by_number(5, "https://new.com", "New") is None
+    assert len(reading_list.links) == 1

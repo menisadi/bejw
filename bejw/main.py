@@ -7,7 +7,7 @@ from pathlib import Path
 
 import typer
 
-from .models import CapacityError, ReadingList
+from .models import CapacityError, Link, ReadingList
 from .render import ColorMode, OutputFormat, render_links
 from .storage import load, save
 from rich import print
@@ -39,6 +39,29 @@ def init(capacity: int = DEFAULT_CAPACITY, file_path: str = DEFAULT_FILE_PATH) -
     typer.echo(f"Initialized reading list at {expanded_path} with capacity {capacity}")
 
 
+def _prompt_replace(reading_list: ReadingList, url: str, title: str) -> Link | None:
+    """Show unread links and let the user pick one to replace, or cancel."""
+    unread = reading_list.unread_links()
+    typer.echo("Reading list is full! Pick a link to replace or press Enter to cancel:\n")
+    for index, link in enumerate(unread, start=1):
+        typer.echo(f"  {index}. {link.title} — {link.url}")
+    typer.echo("")
+    choice = typer.prompt("Replace #", default="", show_default=False)
+    if choice == "":
+        typer.echo("Cancelled.")
+        return None
+    try:
+        number = int(choice)
+    except ValueError:
+        typer.echo("Invalid number. Cancelled.")
+        return None
+    new_link = reading_list.replace_by_number(number, url, title)
+    if new_link is None:
+        typer.echo("No link found with that number. Cancelled.")
+        return None
+    return new_link
+
+
 @app.command()
 def add(url: str, title: str, file_path: str = DEFAULT_FILE_PATH) -> None:
     """Add a link to the reading list."""
@@ -46,10 +69,9 @@ def add(url: str, title: str, file_path: str = DEFAULT_FILE_PATH) -> None:
     try:
         link = reading_list.add_link(url, title)
     except CapacityError:
-        typer.echo(
-            "Reading list is full! Please remove a link before adding a new one."
-        )
-        raise typer.Exit(code=1)
+        link = _prompt_replace(reading_list, url, title)
+        if link is None:
+            raise typer.Exit(code=1)
     save(reading_list, file_path)
     ordered = reading_list.unread_links()
     number = next(

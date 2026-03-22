@@ -70,6 +70,17 @@ class ReadingList:
         target_id = visible_links[number - 1].id
         return self.remove_link(target_id)
 
+    def replace_by_number(self, number: int, url: str, title: str) -> Link | None:
+        """Remove unread link at *number* and add a new link in its place."""
+        unread = self.unread_links()
+        if number < 1 or number > len(unread):
+            return None
+        target_id = unread[number - 1].id
+        self.links = [link for link in self.links if link.id != target_id]
+        link = Link.create(url, title)
+        self.links.append(link)
+        return link
+
     def clear_links(self) -> None:
         self.links = []
 
