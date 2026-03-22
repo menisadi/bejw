@@ -41,12 +41,22 @@ def init(capacity: int = DEFAULT_CAPACITY, file_path: str = DEFAULT_FILE_PATH) -
 
 def _prompt_replace(reading_list: ReadingList, url: str, title: str) -> Link | None:
     """Show unread links and let the user pick one to replace, or cancel."""
+    from rich.console import Console
+    from rich.table import Table, box
+
+    console = Console(stderr=True)
     unread = reading_list.unread_links()
-    typer.echo("Reading list is full! Pick a link to replace or press Enter to cancel:\n")
+
+    console.print("[bold yellow]Reading list is full![/bold yellow] Pick a link to replace:\n")
+
+    table = Table(box=box.SIMPLE, show_header=False, padding=(0, 1))
+    table.add_column("no", style="cyan", justify="right", no_wrap=True)
+    table.add_column("title", style="magenta")
     for index, link in enumerate(unread, start=1):
-        typer.echo(f"  {index}. {link.title} — {link.url}")
-    typer.echo("")
-    choice = typer.prompt("Replace #", default="", show_default=False)
+        table.add_row(str(index), link.title)
+    console.print(table)
+
+    choice = typer.prompt("Replace #  (Enter to cancel)", default="", show_default=False)
     if choice == "":
         typer.echo("Cancelled.")
         return None
