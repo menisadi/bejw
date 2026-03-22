@@ -43,7 +43,7 @@ class ReadingList:
         self.links: list[Link] = list(links or [])
 
     def add_link(self, url: str, title: str) -> Link:
-        if len(self.links) >= self.capacity:
+        if len(self.unread_links()) >= self.capacity:
             raise CapacityError("Reading list is full")
         link = Link.create(url, title)
         self.links.append(link)
