@@ -167,9 +167,15 @@ def list(
 
 
 @app.command()
-def capacity(value: int, file_path: str = DEFAULT_FILE_PATH) -> None:
-    """Change the capacity of the reading list."""
+def capacity(
+    value: int = typer.Argument(None),
+    file_path: str = DEFAULT_FILE_PATH,
+) -> None:
+    """Show or change the capacity of the reading list."""
     reading_list = load(file_path)
+    if value is None:
+        typer.echo(reading_list.capacity)
+        return
     reading_list.capacity = value
     save(reading_list, file_path)
     typer.echo(f"Capacity set to {value}")
