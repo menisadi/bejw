@@ -115,8 +115,9 @@ def render_links(
         return
 
     # If non of the above formats were selected, rendering a table
+    unread_count = len(reading_list.unread_links())
     table = Table(
-        title="Bejeweled Reading List",
+        title=f"Bejeweled Reading List ({unread_count}/{reading_list.capacity})",
         box=box.SIMPLE,
         title_justify="left",
         title_style="bold red",
