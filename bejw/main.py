@@ -47,7 +47,9 @@ def _prompt_replace(reading_list: ReadingList, url: str, title: str) -> Link | N
     console = Console(stderr=True)
     unread = reading_list.unread_links()
 
-    console.print("[bold yellow]Reading list is full![/bold yellow] Pick a link to replace:\n")
+    console.print(
+        "[bold yellow]Reading list is full![/bold yellow] Pick a link to replace:\n"
+    )
 
     table = Table(box=box.SIMPLE, show_header=False, padding=(0, 1))
     table.add_column("no", style="cyan", justify="right", no_wrap=True)
@@ -56,7 +58,9 @@ def _prompt_replace(reading_list: ReadingList, url: str, title: str) -> Link | N
         table.add_row(str(index), link.title)
     console.print(table)
 
-    choice = typer.prompt("Replace #  (Enter to cancel)", default="", show_default=False)
+    choice = typer.prompt(
+        "Replace #  (Enter to cancel)", default="", show_default=False
+    )
     if choice == "":
         typer.echo("Cancelled.")
         return None

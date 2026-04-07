@@ -92,7 +92,9 @@ class ReadingList:
         target_id = visible_links[number - 1].id
         read_at = datetime.now(timezone.utc).isoformat()
         self.links = [
-            link if link.id != target_id else Link(**{**link.__dict__, "read_at": read_at})
+            link
+            if link.id != target_id
+            else Link(**{**link.__dict__, "read_at": read_at})
             for link in self.links
         ]
         return True

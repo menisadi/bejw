@@ -8,6 +8,7 @@ from rich.table import Table, box
 
 from .models import ReadingList
 
+
 class OutputFormat(StrEnum):
     TABLE = "table"
     TSV = "tsv"
