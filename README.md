@@ -1,6 +1,10 @@
+<div align="center">
+
 # bejw
 
-A small CLI to keep a capped reading list of links in a local JSON file.
+`A capped reading list in your terminal.`
+
+</div>
 
 ## Install
 
