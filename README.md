@@ -5,30 +5,40 @@ A small CLI to keep a capped reading list of links in a local JSON file.
 ## Install
 
 ```bash
-uv sync
+uv tool install bejw
 ```
 
-## Usage
+Or with pip:
 
 ```bash
-python main.py --help
-python main.py init --capacity 10
-python main.py add "https://example.com" "Example"
-python main.py list
-python main.py list --include-read
-python main.py list --color always | less -R
-python main.py list --format tsv --show-ids | fzf
-python main.py list --format jsonl | jq .
-python main.py mark-read <number>
-python main.py remove <number>
-python main.py capacity 5
-python main.py clear
+pip install bejw
 ```
 
-`list` output includes a 1-based number column and a `status` field (`unread`/`read`) so you can distinguish entry state across output formats.
-By default, links marked as read are hidden from `list`; use `--include-read` to display them.
-Use `--color always` to force ANSI colors when piping table output (for example to `less -R`).
+## Quick start
+
+```bash
+bejw init                # create a reading list (default capacity: 10)
+bejw add URL TITLE       # save a link
+bejw list                # show unread links
+```
+
+## Commands
+
+```bash
+bejw init [--capacity N]       # initialize the reading list
+bejw add URL TITLE             # add a link (prompts to replace one if full)
+bejw list                      # display unread links
+bejw list --include-read       # include read links
+bejw list --format tsv|csv|jsonl  # alternate output formats
+bejw list --color always       # force colors (useful when piping to less -R)
+bejw read N                    # open link #N in the browser
+bejw mark-read N               # mark link #N as read
+bejw remove N                  # remove link #N
+bejw capacity                  # show current capacity
+bejw capacity N                # set capacity to N
+bejw clear                     # remove all links
+```
 
 ## Storage
 
-By default, data is stored in `~/.bejw/links.json`.
+Data is stored in `~/.bejw/links.json` by default. All commands accept `--file-path` to use a different location.
