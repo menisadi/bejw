@@ -43,8 +43,7 @@ def test_list_tsv_with_header_and_ids(tmp_path: Path) -> None:
 
     assert result.exit_code == 0
     assert (
-        result.stdout
-        == "no\tid\tstatus\ttitle\turl\n"
+        result.stdout == "no\tid\tstatus\ttitle\turl\n"
         "1\tid-1\tunread\tExample One\thttps://example.com/1\n"
     )
 
@@ -97,8 +96,7 @@ def test_list_include_read_shows_read_entries(tmp_path: Path) -> None:
 
     assert result.exit_code == 0
     assert (
-        result.stdout
-        == "no\tid\tstatus\ttitle\turl\n"
+        result.stdout == "no\tid\tstatus\ttitle\turl\n"
         "1\tid-1\tunread\tExample One\thttps://example.com/1\n"
         "2\tid-2\tread\tExample Two\thttps://example.com/2\n"
     )
