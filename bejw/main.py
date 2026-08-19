@@ -3,14 +3,15 @@ bejw:  A capped reading list for links that shimmer
 """
 
 import webbrowser
+from datetime import UTC, datetime
 from pathlib import Path
 
 import typer
+from rich import print
 
 from .models import CapacityError, Link, ReadingList
 from .render import ColorMode, OutputFormat, render_links
 from .storage import load, save
-from rich import print
 
 DEFAULT_CAPACITY = 10
 DEFAULT_FILE_PATH = "~/.bejw/links.json"
@@ -170,6 +171,40 @@ def list(
     )
 
 
+def _humanize_age(timestamp: str) -> str:
+    """Render an ISO timestamp as a rough age like '3 days ago'."""
+    try:
+        changed_at = datetime.fromisoformat(timestamp)
+    except ValueError:
+        return "at an unknown time"
+    if changed_at.tzinfo is None:
+        changed_at = changed_at.replace(tzinfo=UTC)
+    seconds = (datetime.now(UTC) - changed_at).total_seconds()
+    if seconds < 60:
+        return "just now"
+    minutes = seconds / 60
+    if minutes < 60:
+        return _ago(int(minutes), "minute")
+    hours = minutes / 60
+    if hours < 24:
+        return _ago(int(hours), "hour")
+    return _ago(int(hours / 24), "day")
+
+
+def _ago(count: int, unit: str) -> str:
+    return f"{count} {unit} ago" if count == 1 else f"{count} {unit}s ago"
+
+
+def _capacity_trace(reading_list: ReadingList) -> str | None:
+    """Describe the last capacity change, or None if it was never changed."""
+    changed_at = reading_list.capacity_changed_at
+    previous = reading_list.previous_capacity
+    if changed_at is None or previous is None:
+        return None
+    direction = "raised" if reading_list.capacity > previous else "lowered"
+    return f"({direction} from {previous}, {_humanize_age(changed_at)})"
+
+
 @app.command()
 def capacity(
     value: int = typer.Argument(None),
@@ -179,8 +214,15 @@ def capacity(
     reading_list = load(file_path)
     if value is None:
         typer.echo(reading_list.capacity)
+        trace = _capacity_trace(reading_list)
+        if trace is not None:
+            typer.echo(trace, err=True)
         return
-    reading_list.capacity = value
+    try:
+        reading_list.set_capacity(value)
+    except (CapacityError, ValueError) as error:
+        typer.echo(str(error), err=True)
+        raise typer.Exit(code=1)
     save(reading_list, file_path)
     typer.echo(f"Capacity set to {value}")
 

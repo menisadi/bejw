@@ -39,8 +39,32 @@ bejw read N                    # open link #N in the browser
 bejw mark-read N               # mark link #N as read
 bejw remove N                  # remove link #N
 bejw capacity                  # show current capacity
-bejw capacity N                # set capacity to N
+bejw capacity N                # set capacity to N (see Capacity below)
 bejw clear                     # remove all links
+```
+
+## Capacity
+
+The cap is the point of the tool, so raising it has one rule: **you cannot raise
+capacity while the list is full.** Mark something read first.
+
+```bash
+$ bejw capacity 15
+Reading list is full. Mark something read before raising capacity.
+```
+
+Lowering is always allowed, and raising works normally whenever there is
+headroom — so deciding "10 was the wrong number for me" costs nothing. What the
+rule blocks is the reflexive raise: hitting a full list mid-flow and moving the
+cap instead of reading something.
+
+Every change is recorded, and `bejw capacity` reports the last one on stderr so
+drift stays visible while the bare number stays pipe-friendly:
+
+```bash
+$ bejw capacity
+15
+(raised from 10, 3 days ago)
 ```
 
 ## Storage

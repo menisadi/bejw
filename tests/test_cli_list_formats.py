@@ -6,7 +6,6 @@ from bejw.main import app
 from bejw.models import Link, ReadingList
 from bejw.storage import save
 
-
 runner = CliRunner()
 
 

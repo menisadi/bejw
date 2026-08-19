@@ -1,5 +1,5 @@
-from pathlib import Path
 import json
+from pathlib import Path
 
 from bejw.models import ReadingList
 from bejw.storage import load, save

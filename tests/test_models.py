@@ -23,6 +23,79 @@ def test_add_link_raises_when_capacity_reached() -> None:
         reading_list.add_link("https://second.com", "Second")
 
 
+def test_set_capacity_refuses_to_raise_while_full() -> None:
+    reading_list = ReadingList(capacity=1)
+    reading_list.add_link("https://first.com", "First")
+
+    with pytest.raises(CapacityError):
+        reading_list.set_capacity(5)
+
+    assert reading_list.capacity == 1
+    assert reading_list.capacity_changed_at is None
+
+
+def test_set_capacity_raises_when_there_is_headroom() -> None:
+    reading_list = ReadingList(capacity=2)
+    reading_list.add_link("https://first.com", "First")
+
+    reading_list.set_capacity(5)
+
+    assert reading_list.capacity == 5
+    assert reading_list.previous_capacity == 2
+    assert reading_list.capacity_changed_at is not None
+
+
+def test_set_capacity_allows_lowering_while_full() -> None:
+    reading_list = ReadingList(capacity=2)
+    reading_list.add_link("https://first.com", "First")
+    reading_list.add_link("https://second.com", "Second")
+
+    reading_list.set_capacity(1)
+
+    assert reading_list.capacity == 1
+    assert reading_list.previous_capacity == 2
+
+
+def test_set_capacity_ignores_read_links_when_checking_headroom() -> None:
+    reading_list = ReadingList(capacity=1)
+    reading_list.add_link("https://first.com", "First")
+    reading_list.mark_read_by_number(1)
+
+    reading_list.set_capacity(3)
+
+    assert reading_list.capacity == 3
+
+
+def test_set_capacity_rejects_values_below_one() -> None:
+    reading_list = ReadingList(capacity=2)
+
+    with pytest.raises(ValueError):
+        reading_list.set_capacity(0)
+
+    assert reading_list.capacity == 2
+
+
+def test_set_capacity_to_current_value_leaves_no_trace() -> None:
+    reading_list = ReadingList(capacity=2)
+
+    reading_list.set_capacity(2)
+
+    assert reading_list.capacity == 2
+    assert reading_list.previous_capacity is None
+    assert reading_list.capacity_changed_at is None
+
+
+def test_capacity_trace_survives_a_round_trip() -> None:
+    original = ReadingList(capacity=2)
+    original.set_capacity(4)
+
+    restored = ReadingList.from_dict(original.to_dict())
+
+    assert restored.capacity == 4
+    assert restored.previous_capacity == 2
+    assert restored.capacity_changed_at == original.capacity_changed_at
+
+
 def test_remove_by_number_returns_true_when_found() -> None:
     reading_list = ReadingList()
     reading_list.add_link("https://example.com", "Example")

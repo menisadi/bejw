@@ -1,8 +1,8 @@
 from __future__ import annotations
 
+from collections.abc import Iterable
 from dataclasses import dataclass
-from datetime import datetime, timedelta, timezone
-from typing import Iterable
+from datetime import UTC, datetime, timedelta
 from uuid import uuid4
 
 
@@ -22,8 +22,8 @@ class Link:
     read_at: str | None = None
 
     @staticmethod
-    def create(url: str, title: str) -> "Link":
-        created_at = datetime.now(timezone.utc).isoformat()
+    def create(url: str, title: str) -> Link:
+        created_at = datetime.now(UTC).isoformat()
         return Link(id=str(uuid4()), url=url, title=title, created_at=created_at)
 
 
@@ -31,16 +31,42 @@ def _created_at_key(link: Link) -> datetime:
     try:
         created_at = datetime.fromisoformat(link.created_at)
     except ValueError:
-        return datetime.min.replace(tzinfo=timezone.utc)
+        return datetime.min.replace(tzinfo=UTC)
     if created_at.tzinfo is None:
-        return created_at.replace(tzinfo=timezone.utc)
+        return created_at.replace(tzinfo=UTC)
     return created_at
 
 
 class ReadingList:
-    def __init__(self, capacity: int = 10, links: Iterable[Link] | None = None) -> None:
+    def __init__(
+        self,
+        capacity: int = 10,
+        links: Iterable[Link] | None = None,
+        capacity_changed_at: str | None = None,
+        previous_capacity: int | None = None,
+    ) -> None:
         self.capacity = capacity
         self.links: list[Link] = list(links or [])
+        self.capacity_changed_at = capacity_changed_at
+        self.previous_capacity = previous_capacity
+
+    def set_capacity(self, value: int) -> None:
+        """Set the capacity, refusing to raise it while the list is full.
+
+        Lowering is always allowed. Raising requires headroom, so a full list
+        cannot be escaped by moving the cap instead of reading something.
+        """
+        if value < 1:
+            raise ValueError("Capacity must be at least 1")
+        if value > self.capacity and len(self.unread_links()) >= self.capacity:
+            raise CapacityError(
+                "Reading list is full. Mark something read before raising capacity."
+            )
+        if value == self.capacity:
+            return
+        self.previous_capacity = self.capacity
+        self.capacity_changed_at = datetime.now(UTC).isoformat()
+        self.capacity = value
 
     def add_link(self, url: str, title: str) -> Link:
         if len(self.unread_links()) >= self.capacity:
@@ -90,7 +116,7 @@ class ReadingList:
             return False
 
         target_id = visible_links[number - 1].id
-        read_at = datetime.now(timezone.utc).isoformat()
+        read_at = datetime.now(UTC).isoformat()
         self.links = [
             link
             if link.id != target_id
@@ -102,13 +128,15 @@ class ReadingList:
     def to_dict(self) -> dict:
         return {
             "capacity": self.capacity,
+            "capacity_changed_at": self.capacity_changed_at,
+            "previous_capacity": self.previous_capacity,
             "links": [link.__dict__ for link in self.links],
         }
 
     @staticmethod
-    def from_dict(data: dict) -> "ReadingList":
+    def from_dict(data: dict) -> ReadingList:
         raw_links = data.get("links", [])
-        base_time = datetime(1970, 1, 1, tzinfo=timezone.utc)
+        base_time = datetime(1970, 1, 1, tzinfo=UTC)
         links = []
         for index, item in enumerate(raw_links):
             if "created_at" not in item:
@@ -120,4 +148,9 @@ class ReadingList:
                 item = {**item, "read_at": None}
             links.append(Link(**item))
         capacity = data.get("capacity", 10)
-        return ReadingList(capacity=capacity, links=links)
+        return ReadingList(
+            capacity=capacity,
+            links=links,
+            capacity_changed_at=data.get("capacity_changed_at"),
+            previous_capacity=data.get("previous_capacity"),
+        )
