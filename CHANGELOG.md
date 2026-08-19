@@ -6,6 +6,12 @@ The format is based on Keep a Changelog, and this project adheres to Semantic Ve
 
 ## [Unreleased]
 
+## [0.6.0] - 2026-08-19
+
+- `init` now reports what an existing reading list holds and asks before
+  discarding it, instead of overwriting silently. Added `init --force` to skip
+  the prompt in scripts.
+
 ## [0.5.0] - 2026-08-19
 
 - `capacity N` now refuses to raise the capacity while the list is full; mark a
