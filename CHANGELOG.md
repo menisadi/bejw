@@ -6,6 +6,16 @@ The format is based on Keep a Changelog, and this project adheres to Semantic Ve
 
 ## [Unreleased]
 
+## [0.5.0] - 2026-08-19
+
+- `capacity N` now refuses to raise the capacity while the list is full; mark a
+  link as read first. Lowering is still always allowed, and raising with
+  headroom is unchanged.
+- `capacity` now reports the last capacity change on stderr (e.g.
+  "(raised from 10, 3 days ago)"), keeping the bare number on stdout for pipes.
+- `capacity` rejects values below 1, which would otherwise lock out any future
+  raise.
+
 ## [0.4.1] - 2026-03-22
 
 - Show capacity in list table title (e.g. "12/15")
