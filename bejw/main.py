@@ -30,13 +30,31 @@ def main(context: typer.Context) -> None:
 
 
 @app.command()
-def init(capacity: int = DEFAULT_CAPACITY, file_path: str = DEFAULT_FILE_PATH) -> None:
+def init(
+    capacity: int = DEFAULT_CAPACITY,
+    file_path: str = DEFAULT_FILE_PATH,
+    force: bool = typer.Option(
+        False,
+        "--force",
+        help="Overwrite an existing reading list without confirming.",
+    ),
+) -> None:
     """Initialize the reading list with a specified capacity and file path."""
-    # NOTE: this will override existing reading list
-    # TODO: add a confirmation prompt before overriding
+    expanded_path = Path(file_path).expanduser()
+    if expanded_path.exists() and not force:
+        existing = load(file_path)
+        total = len(existing.links)
+        unread = len(existing.unread_links())
+        typer.echo(
+            f"{expanded_path} already holds {total} link{'' if total == 1 else 's'} "
+            f"({unread} unread) with capacity {existing.capacity}.",
+            err=True,
+        )
+        if not typer.confirm("Discard them and start over?"):
+            typer.echo("Cancelled.")
+            raise typer.Exit(code=1)
     reading_list = ReadingList(capacity=capacity)
     save(reading_list, file_path)
-    expanded_path = str(Path(file_path).expanduser())
     typer.echo(f"Initialized reading list at {expanded_path} with capacity {capacity}")
 
 

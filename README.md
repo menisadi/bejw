@@ -29,7 +29,8 @@ bejw list                # show unread links
 ## Commands
 
 ```bash
-bejw init [--capacity N]       # initialize the reading list
+bejw init [--capacity N]       # initialize the reading list (confirms if one exists)
+bejw init --force              # overwrite an existing list without confirming
 bejw add URL TITLE             # add a link (prompts to replace one if full)
 bejw list                      # display unread links
 bejw list --include-read       # include read links
@@ -65,6 +66,15 @@ drift stays visible while the bare number stays pipe-friendly:
 $ bejw capacity
 15
 (raised from 10, 3 days ago)
+```
+
+`init` is the other way to reset the cap, so it now shows what it is about to
+discard and asks first. Use `--force` to skip the prompt in scripts:
+
+```bash
+$ bejw init --capacity 20
+~/.bejw/links.json already holds 8 links (6 unread) with capacity 10.
+Discard them and start over? [y/N]:
 ```
 
 ## Storage
