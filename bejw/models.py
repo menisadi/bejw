@@ -110,20 +110,17 @@ class ReadingList:
     def clear_links(self) -> None:
         self.links = []
 
-    def mark_read_by_number(self, number: int, include_read: bool = False) -> bool:
+    def mark_read_by_number(
+        self, number: int, include_read: bool = False
+    ) -> Link | None:
         visible_links = self.ordered_links() if include_read else self.unread_links()
         if number < 1 or number > len(visible_links):
-            return False
+            return None
 
-        target_id = visible_links[number - 1].id
-        read_at = datetime.now(UTC).isoformat()
-        self.links = [
-            link
-            if link.id != target_id
-            else Link(**{**link.__dict__, "read_at": read_at})
-            for link in self.links
-        ]
-        return True
+        target = visible_links[number - 1]
+        marked = Link(**{**target.__dict__, "read_at": datetime.now(UTC).isoformat()})
+        self.links = [link if link.id != target.id else marked for link in self.links]
+        return marked
 
     def to_dict(self) -> dict:
         return {

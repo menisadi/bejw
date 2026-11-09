@@ -6,6 +6,11 @@ The format is based on Keep a Changelog, and this project adheres to Semantic Ve
 
 ## [Unreleased]
 
+## [0.6.1] - 2026-11-09
+
+- `mark-read` now prints the title of the link it marked (e.g.
+  "Marked #2 as read: Example Two"), so you can confirm it hit the right one.
+
 ## [0.6.0] - 2026-08-19
 
 - `init` now reports what an existing reading list holds and asks before

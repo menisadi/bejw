@@ -148,7 +148,7 @@ def mark_read(number: int, file_path: str = DEFAULT_FILE_PATH) -> None:
         typer.echo("No link found with that number.")
         raise typer.Exit(code=1)
     save(reading_list, file_path)
-    typer.echo(f"Marked #{number} as read.")
+    typer.echo(f"Marked #{number} as read: {marked.title}")
 
 
 @app.command()

@@ -37,7 +37,7 @@ def test_mark_read_marks_entry_and_persists(tmp_path: Path) -> None:
     result = runner.invoke(app, ["mark-read", "2", "--file-path", str(file_path)])
 
     assert result.exit_code == 0
-    assert result.stdout == "Marked #2 as read.\n"
+    assert result.stdout == "Marked #2 as read: Example Two\n"
     updated = load(str(file_path))
     assert updated.links[1].read_at is not None
 

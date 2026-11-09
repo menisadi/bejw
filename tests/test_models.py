@@ -133,7 +133,8 @@ def test_mark_read_by_number_marks_link_and_removes_from_unread_view() -> None:
 
     marked = reading_list.mark_read_by_number(1)
 
-    assert marked is True
+    assert marked is not None
+    assert marked.id == first.id
     refreshed_first = next(link for link in reading_list.links if link.id == first.id)
     refreshed_second = next(link for link in reading_list.links if link.id == second.id)
     assert refreshed_first.read_at is not None
