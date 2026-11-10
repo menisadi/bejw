@@ -6,6 +6,10 @@ The format is based on Keep a Changelog, and this project adheres to Semantic Ve
 
 ## [Unreleased]
 
+## [0.7.0] - 2026-11-10
+
+- Added `--version` / `-V` to print the installed version.
+
 ## [0.6.1] - 2026-11-09
 
 - `mark-read` now prints the title of the link it marked (e.g.
