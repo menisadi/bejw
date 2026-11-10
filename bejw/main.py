@@ -4,6 +4,7 @@ bejw:  A capped reading list for links that shimmer
 
 import webbrowser
 from datetime import UTC, datetime
+from importlib.metadata import PackageNotFoundError, version
 from pathlib import Path
 
 import typer
@@ -19,8 +20,28 @@ DEFAULT_FILE_PATH = "~/.bejw/links.json"
 app = typer.Typer()
 
 
+def _version_callback(value: bool) -> None:
+    if not value:
+        return
+    try:
+        typer.echo(version("bejw"))
+    except PackageNotFoundError:
+        typer.echo("unknown")
+    raise typer.Exit()
+
+
 @app.callback(invoke_without_command=True)
-def main(context: typer.Context) -> None:
+def main(
+    context: typer.Context,
+    show_version: bool = typer.Option(
+        False,
+        "--version",
+        "-V",
+        callback=_version_callback,
+        is_eager=True,
+        help="Show the installed version and exit.",
+    ),
+) -> None:
     if context.invoked_subcommand is not None:
         return
     print(
